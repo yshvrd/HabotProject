@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from db.session import SessionLocal
+from db.session import get_db
 
 from core.employee_crud import (
     create_employee,
@@ -21,17 +21,6 @@ from core.auth import get_current_user
 
 
 router = APIRouter(prefix="/api/employees", tags=["employees"])
-
-
-
-# DB dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 
 # create employee endpoint 
