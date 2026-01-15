@@ -16,6 +16,10 @@ from core.schemas import (
     EmployeeResponse,
 )
 
+from core.auth import get_current_user
+
+
+
 router = APIRouter(prefix="/api/employees", tags=["employees"])
 
 
@@ -32,7 +36,7 @@ def get_db():
 
 # create employee endpoint 
 @router.post("/", response_model=EmployeeResponse, status_code=status.HTTP_201_CREATED,)
-def create_employee_api(employee_in: CreateEmployee, db: Session = Depends(get_db)):
+def create_employee_api(employee_in: CreateEmployee, db: Session = Depends(get_db), _: str = Depends(get_current_user)):
     try:
         return create_employee(db, employee_in)
     
@@ -46,7 +50,7 @@ def create_employee_api(employee_in: CreateEmployee, db: Session = Depends(get_d
 
 # get employee by id endpoint 
 @router.get("/{employee_id}", response_model=EmployeeResponse)
-def get_employee_api(employee_id: int, db: Session = Depends(get_db)):
+def get_employee_api(employee_id: int, db: Session = Depends(get_db), _: str = Depends(get_current_user)):
     employee = get_employee_by_id(db, employee_id)
 
     if not employee:
@@ -54,16 +58,16 @@ def get_employee_api(employee_id: int, db: Session = Depends(get_db)):
     
     return employee
 
-
-
 # list employees endpoint 
 @router.get("/", response_model=list[EmployeeResponse])
-def list_employees_api(page: int = 1, department: str | None = None, role: str | None = None, db: Session = Depends(get_db)):
+def list_employees_api(page: int = 1, department: str | None = None, role: str | None = None, db: Session = Depends(get_db), _: str = Depends(get_current_user)):
     return get_employees(db, page, department, role)
+
+
 
 # Update employee endpoint 
 @router.put("/{employee_id}", response_model=EmployeeResponse)
-def update_employee_api(employee_id: int, employee_in: UpdateEmployee, db: Session = Depends(get_db)):
+def update_employee_api(employee_id: int, employee_in: UpdateEmployee, db: Session = Depends(get_db), _: str = Depends(get_current_user)):
     employee = update_employee(db, employee_id, employee_in)
 
     if not employee:
@@ -75,7 +79,7 @@ def update_employee_api(employee_id: int, employee_in: UpdateEmployee, db: Sessi
 
 # delete employee endpoint 
 @router.delete("/{employee_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_employee_api(employee_id: int, db: Session = Depends(get_db)):
+def delete_employee_api(employee_id: int, db: Session = Depends(get_db), _: str = Depends(get_current_user)):
     success = delete_employee(db, employee_id)
 
     if not success:
