@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from db.models import Employee
-from core.schemas import CreateEmployee
+from core.schemas import CreateEmployee, UpdateEmployee
 
 
 # create employee
@@ -55,4 +55,24 @@ def get_employees(db: Session, page: int = 1, department: str | None = None, rol
 
 
 # Update employee
+def update_employee(db: Session, employee_id: int, employee_in: UpdateEmployee):
+    employee = db.query(Employee).filter(Employee.id == employee_id).first()
+
+    if not employee:
+        return None
+    
+    # only update provided fields
+    update_data = employee_in.model_dump(exclude_unset=True) 
+    for field, value in update_data.items():
+        setattr(employee, field, value)
+
+    db.commit()
+    db.refresh(employee)
+
+    return employee
+
+
+
+
+# Delete employee
 
