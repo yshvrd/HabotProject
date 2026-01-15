@@ -17,12 +17,12 @@ CREATE DATABASE habot_test_db;
 
 2. Run file 
 ```bash
-cd Backend 
+cd backend 
 pytest tests/conftest.py
 ```
 ```bash
 # run all tests 
-cd Backend 
+cd backend 
 
 pytest
 ```

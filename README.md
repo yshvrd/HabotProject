@@ -1,5 +1,6 @@
 # Habot - hiring project (Python Backend Developer)
 
+A FastAPI-based backend implementing employee management with JWT authentication and PostgreSQL.
 
 
 ## Run locally - 
@@ -42,6 +43,10 @@ python -m db.create_table
 uvicorn app:app --reload
 ```
 
+
+See [Tests Documentation](backend/tests/README.md) for details on running and understanding the test suite.
+
+
 ## Test Endpoints
 
 1. generate auth token 
@@ -50,39 +55,57 @@ curl -X POST http://127.0.0.1:8000/api/auth/token \
   -H "Content-Type: application/json" \
   -d '{"username":"admin","password":"admin"}'
 ```
+
+- Returns a JWT access token
+- Required for accessing protected endpoints
+
 ![](assets/01.png)
 
 
-2. Test endpoints
+2. employees endpoint(without auth)
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/employees/ \
   -H "Content-Type: application/json" \
   -d '{"name":"Me","email":"me@test.com"}'
 ```
+
+- Does not work 
+- Returns 401 Unauthorized
+
 ![](assets/02.png)
 
+
+3. Create Employee
 ```bash
 curl -X POST http://127.0.0.1:8000/api/employees/ \
   -H "Authorization: Bearer <TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{"name":"Alice","email":"alice@test.com"}'
 ```
+
+- Creates a new employee
+- Returns 201 Created
+- Duplicate email returns 400 Bad Request
+
 ![](assets/03.png)
 
-
+4. List Employees
 ```bash
-# list all employees
+# get all
 curl http://127.0.0.1:8000/api/employees/ \
   -H "Authorization: Bearer <TOKEN>"
 ```
-
+```bash
+# get employee by ID
+curl http://127.0.0.1:8000/api/employees/<EMPLOYEE_ID> \
+  -H "Authorization: Bearer <TOKEN>"
+```
 ```bash
 # list employees (pagination)
 curl http://127.0.0.1:8000/api/employees/?page=2 \
   -H "Authorization: Bearer <TOKEN>"
 ```
-
 ```bash
 # list employees (filter by)
 curl http://127.0.0.1:8000/api/employees/?department=Engineering \
@@ -90,17 +113,24 @@ curl http://127.0.0.1:8000/api/employees/?department=Engineering \
 
 ```
 
+5. Update Employee
 ```bash
-# update employee
 curl -X PUT http://127.0.0.1:8000/api/employees/<EMPLOYEE_ID> \
   -H "Authorization: Bearer <TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{"role":"Manager"}'
 ```
+- Updates provided fields only
+- Returns updated employee data
 
+6. Delete Employee
 ```bash
-# delete employee
 curl -X DELETE http://127.0.0.1:8000/api/employees/<EMPLOYEE_ID> \
   -H "Authorization: Bearer <TOKEN>"
 ```
+- Deletes the employee
+- Returns 204 No Content
+
+
+
 
