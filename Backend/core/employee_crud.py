@@ -75,4 +75,12 @@ def update_employee(db: Session, employee_id: int, employee_in: UpdateEmployee):
 
 
 # Delete employee
+def delete_employee(db: Session, employee_id: int) -> bool:
+    employee = db.query(Employee).filter(Employee.id == employee_id).first()
 
+    if not employee:
+        return False
+
+    db.delete(employee)
+    db.commit()
+    return True
